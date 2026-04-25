@@ -1,11 +1,21 @@
-
 import tensorflow as tf
 import numpy as np
 from PIL import Image
 import io
+import os
+import gdown
 
-# Load model (path akan disesuaikan nanti)
-model = tf.keras.models.load_model('model.keras')
+MODEL_PATH = "model.keras"
+FILE_ID = "19mM-XQrJ_mAJjpCQwNXqx8WOYWIDk5sU"
+
+# Download model kalau belum ada
+if not os.path.exists(MODEL_PATH):
+    print("Downloading model from Google Drive...")
+    gdown.download(f"https://drive.google.com/uc?id={FILE_ID}", MODEL_PATH, quiet=False)
+    print("Model downloaded!")
+
+model = tf.keras.models.load_model(MODEL_PATH)
+print("Model loaded!")
 
 def predict_image(image_bytes):
     image = Image.open(io.BytesIO(image_bytes))
