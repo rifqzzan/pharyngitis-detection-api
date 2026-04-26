@@ -8,7 +8,6 @@ import gdown
 MODEL_PATH = "model.keras"
 FILE_ID = "19mM-XQrJ_mAJjpCQwNXqx8WOYWIDk5sU"
 
-# Download model kalau belum ada
 if not os.path.exists(MODEL_PATH):
     print("Downloading model from Google Drive...")
     gdown.download(f"https://drive.google.com/uc?id={FILE_ID}", MODEL_PATH, quiet=False)
