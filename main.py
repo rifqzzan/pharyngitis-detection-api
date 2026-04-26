@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from predictor import predict_image
 from llm import generate_explanation
 
@@ -14,7 +15,7 @@ app.add_middleware(
 
 @app.get("/")
 def home():
-    return {"message": "Pharyngitis Detection API is running!"}
+    return FileResponse("index.html")
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...), language: str = Form("id")):
