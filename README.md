@@ -17,7 +17,7 @@ This started as my final year project at Telkom University I trained a ResNet50 
 Upload a throat photo, and the app will:
 1. Run it through a ResNet50 model to classify as **Normal** or **Pharyngitis**
 2. Pass the result to a Groq LLM (LLaMA 3.3 70B) to generate a plain-language explanation
-3. Return everything as a JSON response — or show it nicely on the web UI
+3. Return everything as a JSON response or show it nicely on the web UI
 
 Supports English and Indonesian explanations.
 
@@ -25,12 +25,12 @@ Supports English and Indonesian explanations.
 
 ## Stack
 
-- **Model** — ResNet50 trained with TensorFlow/Keras
-- **Backend** — FastAPI + Python
-- **LLM** — Groq API (LLaMA 3.3 70B)
-- **Frontend** — Vanilla HTML/CSS/JS
-- **Hosting** — Railway (API) + GitHub Pages (frontend)
-- **Domain** — pharyngitisai.online
+- **Model** → ResNet50 trained with TensorFlow/Keras
+- **Backend** → FastAPI + Python
+- **LLM** → Groq API (LLaMA 3.3 70B)
+- **Frontend** → Vanilla HTML/CSS/JS
+- **Hosting** → Railway (API) + GitHub Pages (frontend)
+- **Domain** → pharyngitisai.online
 
 ---
 
