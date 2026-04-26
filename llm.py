@@ -11,7 +11,7 @@ def generate_explanation(prediction: str, confidence: float, language: str = "id
         prompt = f"""
         You are a medical assistant helping explain diagnostic results.
         
-        Endoscopic image detection results show:
+        Throat image detection results show:
         - Prediction: {prediction}
         - Confidence level: {confidence}%
         
@@ -25,7 +25,7 @@ def generate_explanation(prediction: str, confidence: float, language: str = "id
         prompt = f"""
         Kamu adalah asisten medis yang membantu menjelaskan hasil diagnosis.
         
-        Hasil deteksi gambar endoskopi menunjukkan:
+        Hasil deteksi gambar tenggorokan menunjukkan:
         - Prediksi: {prediction}
         - Tingkat keyakinan: {confidence}%
         
