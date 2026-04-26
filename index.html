@@ -6,31 +6,37 @@
     <title>Pharyngitis Detection</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: #0f172a;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
             color: #e2e8f0;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
 
         .container {
-            background: #1e293b;
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
             padding: 40px;
             width: 90%;
             max-width: 600px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
         }
 
         h1 {
             text-align: center;
-            font-size: 24px;
+            font-size: 26px;
             margin-bottom: 8px;
-            color: #38bdf8;
+            background: linear-gradient(90deg, #60efff, #0061ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .subtitle {
@@ -41,103 +47,180 @@
         }
 
         .upload-area {
-            border: 2px dashed #334155;
-            border-radius: 12px;
+            border: 2px dashed rgba(96, 239, 255, 0.3);
+            border-radius: 16px;
             padding: 40px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
             margin-bottom: 20px;
+            background: rgba(96, 239, 255, 0.03);
         }
 
         .upload-area:hover {
-            border-color: #38bdf8;
-            background: #0f172a;
+            border-color: #60efff;
+            background: rgba(96, 239, 255, 0.07);
+            transform: translateY(-2px);
         }
 
         .upload-area input { display: none; }
-
         .upload-icon { font-size: 48px; margin-bottom: 12px; }
-
         .upload-text { color: #94a3b8; font-size: 14px; }
 
         #preview {
             width: 100%;
-            max-height: 300px;
+            max-height: 280px;
             object-fit: contain;
-            border-radius: 8px;
+            border-radius: 12px;
             margin-bottom: 20px;
             display: none;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         button {
             width: 100%;
             padding: 14px;
-            background: #38bdf8;
-            color: #0f172a;
+            background: linear-gradient(90deg, #60efff, #0061ff);
+            color: #fff;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
         }
 
-        button:hover { background: #7dd3fc; }
-        button:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
-
-        .result {
-            margin-top: 24px;
-            padding: 20px;
-            background: #0f172a;
-            border-radius: 12px;
-            display: none;
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(96, 239, 255, 0.3);
         }
 
-        .result-label {
-            font-size: 28px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .pharyngitis { color: #f87171; }
-        .normal { color: #4ade80; }
-
-        .confidence {
-            text-align: center;
-            color: #94a3b8;
-            font-size: 14px;
-            margin-bottom: 16px;
-        }
-
-        .explanation {
-            background: #1e293b;
-            border-left: 3px solid #38bdf8;
-            padding: 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #cbd5e1;
+        button:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .loading {
             text-align: center;
-            color: #38bdf8;
+            color: #60efff;
             margin-top: 16px;
             display: none;
+            font-size: 14px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .result {
+            margin-top: 24px;
+            padding: 24px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 16px;
+            display: none;
+            border: 1px solid rgba(255,255,255,0.08);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-label {
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .pharyngitis { color: #ff6b6b; }
+        .normal { color: #51cf66; }
+
+        .confidence-text {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar-bg {
+            background: rgba(255,255,255,0.1);
+            border-radius: 999px;
+            height: 12px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            transition: width 1s ease;
+            width: 0%;
+        }
+
+        .fill-pharyngitis {
+            background: linear-gradient(90deg, #ff6b6b, #ee0979);
+        }
+
+        .fill-normal {
+            background: linear-gradient(90deg, #51cf66, #2f9e44);
+        }
+
+        .explanation {
+            background: rgba(96, 239, 255, 0.05);
+            border-left: 3px solid #60efff;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #cbd5e1;
+        }
+
+        /* Watermark */
+        .watermark {
+            margin-top: 24px;
+            text-align: center;
+            color: rgba(255,255,255,0.25);
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .watermark span {
+            color: #60efff;
+            opacity: 0.6;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🔬 Pharyngitis Detection</h1>
-        <p class="subtitle">Upload gambar untuk deteksi faringitis menggunakan AI</p>
+        <p class="subtitle">Upload foto tenggorokan untuk deteksi faringitis menggunakan AI</p>
 
         <div class="upload-area" onclick="document.getElementById('fileInput').click()">
             <input type="file" id="fileInput" accept="image/*" onchange="previewImage(event)">
             <div class="upload-icon">📷</div>
-            <p class="upload-text">Klik untuk upload gambar</p>
+            <p class="upload-text">Klik untuk upload foto tenggorokan</p>
         </div>
 
         <img id="preview" alt="Preview">
@@ -148,10 +231,32 @@
 
         <div class="result" id="result">
             <div class="result-label" id="resultLabel"></div>
-            <div class="confidence" id="confidence"></div>
+            <div class="confidence-text" id="confidenceText"></div>
+
+            <div class="progress-container">
+                <div class="progress-label">
+                    <span>Tingkat Keyakinan</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progressFill"></div>
+                </div>
+            </div>
+
             <div class="explanation" id="explanation"></div>
         </div>
+
+        <div class="watermark">
+    Made by <span>@Rifqi Izza</span>
+    <div style="margin-top: 8px; display: flex; gap: 16px; justify-content: center;">
+        <a href="https://www.linkedin.com/in/rifqi-izza-nuradli/" target="_blank" style="color: #60efff; opacity: 0.7; text-decoration: none; font-size: 12px;">
+            💼 LinkedIn
+        </a>
+        <a href="https://github.com/rifqzzan" target="_blank" style="color: #60efff; opacity: 0.7; text-decoration: none; font-size: 12px;">
+            🐙 GitHub
+        </a>
     </div>
+</div>
 
     <script>
         const API_URL = "https://pharyngitis-detection-api-production.up.railway.app";
@@ -190,13 +295,34 @@
 
                 const data = await response.json();
 
-                document.getElementById('resultLabel').textContent = data.prediction;
-                document.getElementById('resultLabel').className = 
-                    'result-label ' + (data.prediction === 'Pharyngitis' ? 'pharyngitis' : 'normal');
-                document.getElementById('confidence').textContent = `Confidence: ${data.confidence}`;
+                // Ambil angka confidence
+                const confidenceNum = parseFloat(data.confidence);
+
+                // Set label prediksi
+                const label = document.getElementById('resultLabel');
+                label.textContent = data.prediction;
+                label.className = 'result-label ' + 
+                    (data.prediction === 'Pharyngitis' ? 'pharyngitis' : 'normal');
+
+                // Set confidence text
+                document.getElementById('confidenceText').textContent = 
+                    `Model yakin sebesar ${data.confidence}`;
+
+                // Animasi progress bar
+                const fill = document.getElementById('progressFill');
+                fill.className = 'progress-bar-fill ' + 
+                    (data.prediction === 'Pharyngitis' ? 'fill-pharyngitis' : 'fill-normal');
+                document.getElementById('progressPercent').textContent = data.confidence;
+
+                setTimeout(() => {
+                    fill.style.width = confidenceNum + '%';
+                }, 100);
+
+                // Set explanation
                 document.getElementById('explanation').textContent = data.explanation;
 
                 result.style.display = 'block';
+
             } catch (error) {
                 alert('Error: ' + error.message);
             } finally {
