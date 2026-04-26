@@ -8,7 +8,7 @@ Live at → **[pharyngitisai.online](https://pharyngitisai.online)**
 
 ## Background
 
-This started as my final year project at Telkom University — I trained a ResNet50 model on endoscopic throat images to classify pharyngitis vs normal. After graduating, I wanted to turn it into something actually usable, so I wrapped it in a FastAPI backend, added an LLM layer for explanations, and deployed the whole thing.
+This started as my final year project at Telkom University I trained a ResNet50 model on endoscopic throat images to classify pharyngitis vs normal. After graduating, I wanted to turn it into something actually usable, so I wrapped it in a FastAPI backend, added an LLM layer for explanations, and deployed the whole thing.
 
 ---
 
@@ -74,7 +74,7 @@ python -m uvicorn main:app --reload
 
 ## Heads up
 
-The model was trained on endoscopic images, so it works best with clear throat photos taken close up. Regular phone photos might give less accurate results — something I'm planning to improve.
+The model was trained on endoscopic images, so it works best with clear throat photos taken close up. Regular phone photos might give less accurate results something I'm planning to improve.
 
 This is also a screening tool, not a diagnostic one. Always consult a doctor.
 
