@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,19 +20,11 @@
         header {
             padding: 24px 40px;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
             border-bottom: 1px solid #ede9fe;
             background: #fff;
         }
-
-        .logo {
-            font-size: 15px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-        }
-
-        .logo span { color: #7c3aed; }
 
         nav { display: flex; gap: 24px; align-items: center; }
 
@@ -150,7 +142,7 @@
             border: 1px solid #ede9fe;
         }
 
-        button {
+        button#detectBtn {
             width: 100%;
             padding: 14px;
             background: #7c3aed;
@@ -166,13 +158,13 @@
             letter-spacing: -0.2px;
         }
 
-        button:hover {
+        button#detectBtn:hover {
             background: #6d28d9;
             transform: translateY(-1px);
             box-shadow: 0 8px 20px rgba(124, 58, 237, 0.25);
         }
 
-        button:disabled {
+        button#detectBtn:disabled {
             background: #e8e8e8;
             color: #aaa;
             cursor: not-allowed;
@@ -271,13 +263,50 @@
         .fill-pharyngitis { background: #dc2626; }
         .fill-normal { background: #16a34a; }
 
+        /* Language toggle di result */
+        .lang-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
         .explanation-title {
             font-size: 12px;
             font-weight: 600;
             color: #999;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 12px;
+        }
+
+        .lang-buttons {
+            display: flex;
+            background: #f5f3ff;
+            border-radius: 8px;
+            padding: 3px;
+            border: 1px solid #ddd6fe;
+            gap: 3px;
+        }
+
+        .lang-btn {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .lang-btn.active {
+            background: #7c3aed;
+            color: #fff;
+        }
+
+        .lang-btn.inactive {
+            background: transparent;
+            color: #666;
         }
 
         .explanation-text {
@@ -314,42 +343,50 @@
 
     <div class="hero">
         <div class="badge">🔬 AI-Powered Medical Screening</div>
-        <h1>Deteksi <span>Faringitis</span><br>dengan Kecerdasan Buatan</h1>
+        <h1>Detect <span>Pharyngitis</span><br>with Artificial Intelligence</h1>
         <p class="hero-desc">
-            Upload foto tenggorokan dan biarkan model deep learning kami menganalisis 
-            kemungkinan faringitis secara instan. Didukung ResNet50 dan LLM.
+            Upload a throat photo and let our deep learning model instantly analyze 
+            the possibility of pharyngitis. Powered by ResNet50 and LLM.
         </p>
     </div>
 
     <div class="card">
-        <p class="card-title">Upload Gambar</p>
+        <p class="card-title">Upload Image</p>
         <div class="upload-area" onclick="document.getElementById('fileInput').click()">
             <input type="file" id="fileInput" accept="image/*" onchange="previewImage(event)">
             <span class="upload-icon">📷</span>
-            <p class="upload-title">Klik untuk upload foto tenggorokan</p>
-            <p class="upload-sub">JPG, PNG, WEBP — maks 10MB</p>
+            <p class="upload-title">Click to upload throat photo</p>
+            <p class="upload-sub">JPG, PNG, WEBP — max 10MB</p>
         </div>
         <img id="preview" alt="Preview">
-        <button id="detectBtn" onclick="detect()" disabled>Analisis Sekarang →</button>
-        <div class="loading" id="loading">⏳ Model sedang menganalisis gambar...</div>
+        <button id="detectBtn" onclick="detect()" disabled>Analyze Now →</button>
+        <div class="loading" id="loading">⏳ Model is analyzing the image...</div>
     </div>
 
     <div class="result-card" id="resultCard">
-        <p class="card-title">Hasil Analisis</p>
+        <p class="card-title">Analysis Result</p>
         <div class="result-top">
             <div class="result-diagnosis" id="resultLabel"></div>
             <div class="result-badge" id="resultBadge"></div>
         </div>
         <div class="progress-section">
             <div class="progress-header">
-                <span>Tingkat Keyakinan Model</span>
+                <span>Model Confidence Level</span>
                 <span id="progressPercent">0%</span>
             </div>
             <div class="progress-track">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
         </div>
-        <p class="explanation-title">Penjelasan AI</p>
+
+        <!-- Language toggle hanya di bagian explanation -->
+        <div class="lang-section">
+            <p class="explanation-title">AI Explanation</p>
+            <div class="lang-buttons">
+                <button class="lang-btn active" id="btn-en" onclick="switchLang('en')">EN</button>
+                <button class="lang-btn inactive" id="btn-id" onclick="switchLang('id')">ID</button>
+            </div>
+        </div>
         <div class="explanation-text" id="explanation"></div>
     </div>
 
@@ -360,6 +397,38 @@
     <script>
         const API_URL = "https://pharyngitisdetectionai.up.railway.app";
         let selectedFile = null;
+        let currentLang = 'en';
+        let lastPrediction = null;
+        let lastConfidence = null;
+
+        function switchLang(lang) {
+            currentLang = lang;
+            document.getElementById('btn-en').className = 'lang-btn ' + (lang === 'en' ? 'active' : 'inactive');
+            document.getElementById('btn-id').className = 'lang-btn ' + (lang === 'id' ? 'active' : 'inactive');
+
+            // Re-fetch explanation dengan bahasa baru
+            if (lastPrediction !== null) {
+                fetchExplanation(lastPrediction, lastConfidence, lang);
+            }
+        }
+
+        async function fetchExplanation(prediction, confidence, lang) {
+            document.getElementById('explanation').textContent = '⏳ Translating...';
+            try {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                formData.append('language', lang);
+
+                const response = await fetch(`${API_URL}/predict`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                document.getElementById('explanation').textContent = data.explanation;
+            } catch (error) {
+                document.getElementById('explanation').textContent = 'Failed to translate.';
+            }
+        }
 
         function previewImage(event) {
             selectedFile = event.target.files[0];
@@ -383,6 +452,7 @@
 
             const formData = new FormData();
             formData.append('file', selectedFile);
+            formData.append('language', currentLang);
 
             try {
                 const response = await fetch(`${API_URL}/predict`, {
@@ -394,12 +464,15 @@
                 const confidenceNum = parseFloat(data.confidence);
                 const isPharyngitis = data.prediction === 'Pharyngitis';
 
+                lastPrediction = data.prediction;
+                lastConfidence = data.confidence;
+
                 const label = document.getElementById('resultLabel');
                 label.textContent = data.prediction;
                 label.className = 'result-diagnosis ' + (isPharyngitis ? 'diagnosis-pharyngitis' : 'diagnosis-normal');
 
                 const badge = document.getElementById('resultBadge');
-                badge.textContent = isPharyngitis ? '⚠️ Terdeteksi' : '✅ Normal';
+                badge.textContent = isPharyngitis ? '⚠️ Detected' : '✅ Normal';
                 badge.className = 'result-badge ' + (isPharyngitis ? 'badge-pharyngitis' : 'badge-normal');
 
                 const fill = document.getElementById('progressFill');
@@ -411,7 +484,7 @@
                 resultCard.style.display = 'block';
 
             } catch (error) {
-                alert('Gagal terhubung ke server: ' + error.message);
+                alert('Failed to connect to server: ' + error.message);
             } finally {
                 btn.disabled = false;
                 loading.style.display = 'none';
